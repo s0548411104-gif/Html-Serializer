@@ -13,8 +13,10 @@ namespace ConsoleApp1
         public string InnerHtml { get; set; }
         public HtmlElement Parent { get; set; }
         public List<HtmlElement> Children { get; set; } = new();
+
         public override string ToString() =>
             $"<{Name}{(Id != null ? $" id='{Id}'" : "")}{(Classes.Any() ? $" class='{string.Join(" ", Classes)}'" : "")}>";
+
         public IEnumerable<HtmlElement> Descendants()
         {
             var stack = new Stack<HtmlElement>();
@@ -24,9 +26,7 @@ namespace ConsoleApp1
             while (stack.Count > 0)
             {
                 var current = stack.Pop();
-
-                if (!visited.Add(current))
-                    continue; 
+                if (!visited.Add(current)) continue;
 
                 yield return current;
 
@@ -34,6 +34,7 @@ namespace ConsoleApp1
                     stack.Push(child);
             }
         }
+
         public IEnumerable<HtmlElement> Ancestors()
         {
             var current = this.Parent;
@@ -43,12 +44,14 @@ namespace ConsoleApp1
                 current = current.Parent;
             }
         }
+
         public List<HtmlElement> Query(Selector selector)
         {
             var results = new HashSet<HtmlElement>();
             QueryRecursive(this, selector, results);
             return results.ToList();
         }
+
         private void QueryRecursive(HtmlElement element, Selector selector, HashSet<HtmlElement> results)
         {
             foreach (var desc in element.Children)

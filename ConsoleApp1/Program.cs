@@ -1,22 +1,38 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
     class Program
     {
-        static async System.Threading.Tasks.Task Main(string[] args)
+        static async Task Main(string[] args)
         {
-            string url = "https://example.com";
-            string html = await HtmlLoader.Load(url);
+            Console.WriteLine("Enter website URL:");
+            string url = Console.ReadLine();
 
-            var root = HtmlParser.Parse(html);
+            Console.WriteLine("Enter HTML tag name to count:");
+            string tagName = Console.ReadLine();
 
-            var selector = Selector.FromString("div");
-            var results = root.Query(selector);
+            try
+            {
+                string html = await HtmlSerializer.Load(url);
 
-            foreach (var el in results)
-                Console.WriteLine(el);
+                var root = HtmlSerializer.ParseHtml(html);
 
+                var selector = Selector.FromString(tagName);
+
+                var results = root.Query(selector);
+
+                Console.WriteLine($"Found {results.Count} elements of type '{tagName}' on the website {url}.");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message);
+            }
+
+            Console.WriteLine("Press ENTER to exit...");
             Console.ReadLine();
         }
     }
